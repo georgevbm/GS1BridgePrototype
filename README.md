@@ -129,3 +129,10 @@ After a real GS1 confirms the BLE exchange works on iOS:
 ## Windows + iPhone sem assinatura paga
 
 A partir da V0.1.1, o workflow `GS1 iPhone unsigned build` gera um `GS1Bridge-unsigned.ipa` para iPhone físico. Esse IPA pode ser assinado e instalado no Windows com uma Conta Apple gratuita usando uma ferramenta de sideload. Veja `INSTALL_WINDOWS.md`.
+
+
+## v0.1.2
+
+- iOS target moved to Swift 5 language mode while keeping the current Xcode compiler.
+- Fixes closure capture warnings/errors in the retry timers.
+- This is intentional for the prototype because CoreBluetooth's Objective-C delegate APIs do not yet carry the actor-isolation information Swift 6 strict concurrency expects.

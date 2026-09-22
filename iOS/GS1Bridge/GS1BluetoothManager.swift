@@ -149,8 +149,9 @@ final class GS1BluetoothManager: NSObject, ObservableObject {
 
     private func scheduleRetry() {
         retryTask?.cancel()
+        let delay = replyWaitNanoseconds
         retryTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: replyWaitNanoseconds)
+            try? await Task.sleep(nanoseconds: delay)
             guard !Task.isCancelled, let self else { return }
             await MainActor.run {
                 guard !self.isFinished else { return }
@@ -165,8 +166,9 @@ final class GS1BluetoothManager: NSObject, ObservableObject {
 
     private func scheduleBurstEnd() {
         burstTask?.cancel()
+        let delay = burstQuietNanoseconds
         burstTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: burstQuietNanoseconds)
+            try? await Task.sleep(nanoseconds: delay)
             guard !Task.isCancelled, let self else { return }
             await MainActor.run { self.onBurstEnded() }
         }

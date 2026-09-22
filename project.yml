@@ -3,7 +3,7 @@ options:
   bundleIdPrefix: com.gs1bridge.prototype
 settings:
   base:
-    SWIFT_VERSION: 6.0
+    SWIFT_VERSION: 5.0
     DEVELOPMENT_TEAM: ""
 targets:
   GS1Bridge:
