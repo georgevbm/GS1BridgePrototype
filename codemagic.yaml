@@ -1,0 +1,67 @@
+workflows:
+  ios-device-unsigned:
+    name: GS1 iPhone unsigned build
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      xcode: latest
+    scripts:
+      - name: Install XcodeGen
+        script: brew install xcodegen
+      - name: Run protocol tests
+        script: swift test
+      - name: Generate Xcode project
+        script: xcodegen generate
+      - name: Build unsigned app for physical iPhone
+        script: |
+          rm -rf build/DerivedData build/unsigned
+          xcodebuild \
+            -project GS1Bridge.xcodeproj \
+            -scheme GS1Bridge \
+            -configuration Debug \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+      - name: Package unsigned IPA for Windows sideloading
+        script: |
+          APP_PATH=$(find build/DerivedData/Build/Products/Debug-iphoneos -maxdepth 1 -name '*.app' | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No iPhone .app was produced"
+            exit 1
+          fi
+          mkdir -p build/unsigned/Payload
+          cp -R "$APP_PATH" build/unsigned/Payload/
+          cd build/unsigned
+          zip -qry ../GS1Bridge-unsigned.ipa Payload
+          echo "Created $CM_BUILD_DIR/build/GS1Bridge-unsigned.ipa"
+    artifacts:
+      - build/GS1Bridge-unsigned.ipa
+      - build/DerivedData/Build/Products/Debug-iphoneos/*.app
+      - /tmp/xcodebuild_logs/*.log
+
+  ios-simulator-validation:
+    name: GS1 simulator compile check
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      xcode: latest
+    scripts:
+      - name: Install XcodeGen
+        script: brew install xcodegen
+      - name: Run protocol tests
+        script: swift test
+      - name: Generate Xcode project
+        script: xcodegen generate
+      - name: Build for iOS Simulator without signing
+        script: |
+          xcodebuild \
+            -project GS1Bridge.xcodeproj \
+            -scheme GS1Bridge \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build

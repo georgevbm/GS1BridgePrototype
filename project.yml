@@ -1,0 +1,29 @@
+name: GS1Bridge
+options:
+  bundleIdPrefix: com.gs1bridge.prototype
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    DEVELOPMENT_TEAM: ""
+targets:
+  GS1Bridge:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: iOS/GS1Bridge
+      - path: Sources/GS1Core
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.gs1bridge.prototype
+        CODE_SIGN_STYLE: Automatic
+    info:
+      path: iOS/GS1Bridge/Info.plist
+      properties:
+        CFBundleDisplayName: GS1 Debug
+        NSBluetoothAlwaysUsageDescription: Este protótipo usa Bluetooth para ler diretamente o sensor SIBIONICS GS1.
+        UIBackgroundModes:
+          - bluetooth-central
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
